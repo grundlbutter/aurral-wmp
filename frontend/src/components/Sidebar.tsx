@@ -1,6 +1,14 @@
 import { useLocation } from "react-router";
 import RouteLink from "./RouteLink";
-import { useState, useEffect, useCallback, useMemo, type SyntheticEvent } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  type SyntheticEvent,
+} from "react";
 import {
   Activity,
   AudioWaveform,
@@ -19,11 +27,14 @@ import TooltipButton from "./TooltipButton";
 import SidebarPlayer from "./SidebarPlayer";
 import SidebarPlaylists from "./SidebarPlaylists";
 import { useSectionNav } from "../navigation/useSectionNav.ts";
+import { useGlassSkin } from "../skins/glass/useGlassSkin.ts";
 import SidebarStageBackdrop, {
   getSidebarStageBackdropEnabled,
   resolveSidebarStageBackdropVariant,
   SIDEBAR_STAGE_BACKDROP_EVENT,
 } from "./SidebarStageBackdrop";
+
+const GlassNavTree = lazy(() => import("../skins/glass/GlassNavTree.tsx"));
 
 type SidebarProps = {
   mode: "hidden" | "icons" | "full";
@@ -70,6 +81,7 @@ function Sidebar({ mode, width = 208, onToggle, onRestorePlayer }: SidebarProps)
   }, [user?.id]);
 
   const isIcons = mode === "icons" && isDesktop;
+  const glassTree = useGlassSkin() && isDesktop && !isIcons;
   const positionSidebarTooltip = useCallback((event: SyntheticEvent<HTMLElement>) => {
     const link = event.currentTarget;
     const rect = link.getBoundingClientRect();
@@ -158,7 +170,19 @@ function Sidebar({ mode, width = 208, onToggle, onRestorePlayer }: SidebarProps)
         }}
       >
         <div className={`sidebar-body${isIcons ? " sidebar-body--icons" : ""}`}>
-          <div className={`sidebar-nav-wrap${isIcons ? " sidebar-nav-wrap--icons" : ""}`}>
+          {glassTree ? (
+            <Suspense fallback={null}>
+              <GlassNavTree
+                items={navItems}
+                status={playlistStatus}
+                hasReviewAlert={hasReviewAlert}
+              />
+            </Suspense>
+          ) : null}
+          <div
+            className={`sidebar-nav-wrap${isIcons ? " sidebar-nav-wrap--icons" : ""}`}
+            hidden={glassTree}
+          >
             <nav className="sidebar-nav">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -214,7 +238,7 @@ function Sidebar({ mode, width = 208, onToggle, onRestorePlayer }: SidebarProps)
             </nav>
           </div>
 
-          {hasFlowAccess ? (
+          {hasFlowAccess && !glassTree ? (
             <SidebarPlaylists
               status={playlistStatus}
               iconsOnly={isIcons}

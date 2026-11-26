@@ -188,6 +188,17 @@
   --aurral-trough-edge: var(--aurral-border);
   --aurral-caption-close-top: var(--aurral-danger);
   --aurral-caption-close-bottom: var(--aurral-danger);
+  --aurral-scroll-track-top: transparent;
+  --aurral-scroll-track-bottom: transparent;
+  --aurral-scroll-track-edge: transparent;
+  --aurral-scroll-thumb-top: var(--aurral-text-subtle);
+  --aurral-scroll-thumb-bottom: var(--aurral-text-subtle);
+  --aurral-scroll-thumb-edge: transparent;
+  --aurral-scroll-thumb-hot-top: var(--aurral-text-muted);
+  --aurral-scroll-thumb-hot-bottom: var(--aurral-text-muted);
+  --aurral-scroll-thumb-hot-edge: transparent;
+  --aurral-scroll-grip: transparent;
+  --aurral-focus-ring: var(--aurral-ring);
   --aurral-transport-top: var(--aurral-chrome);
   --aurral-transport-mid: var(--aurral-chrome);
   --aurral-transport-split: var(--aurral-chrome);
