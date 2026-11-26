@@ -172,6 +172,7 @@ function Sidebar({ mode, width = 208, onToggle, onRestorePlayer }: SidebarProps)
                   >
                     <RouteLink
                       to={item.path}
+                      data-nav={item.section ?? item.path.slice(1)}
                       onMouseEnter={(event) => {
                         if (isIcons) positionSidebarTooltip(event);
                       }}
