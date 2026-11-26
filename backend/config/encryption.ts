@@ -45,6 +45,7 @@ const SENSITIVE_PATHS = [
   ["nzbget", "password"],
   ["tidarr", "apiKey"],
   ["qbittorrent", "password"],
+  ["transmission", "password"],
   ["google", "clientSecret"],
 ];
 

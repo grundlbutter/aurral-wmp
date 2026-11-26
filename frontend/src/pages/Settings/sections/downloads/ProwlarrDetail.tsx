@@ -55,6 +55,13 @@ export function ProwlarrDetail() {
   const [testing, setTesting] = useState(false);
   const [testStatus, setTestStatus] = useState<TestStatus | null>(null);
   const prowlarr = readProwlarr(settings);
+  const torrentClients =
+    [
+      settings.integrations?.qbittorrent?.enabled === true && "qBittorrent",
+      settings.integrations?.transmission?.enabled === true && "Transmission",
+    ]
+      .filter(Boolean)
+      .join(", ") || "Torrent client";
   const connected = health?.prowlarrConfigured === true;
   const indexersQuery = useQuery({
     queryKey: queryKeys.prowlarrIndexers,
@@ -230,7 +237,7 @@ export function ProwlarrDetail() {
                       <td>{indexer.protocol === "torrent" ? "Torrent" : "Usenet"}</td>
                       <td>
                         {indexer.protocol === "torrent" ? (
-                          "qBittorrent"
+                          torrentClients
                         ) : (
                           <Select
                             aria-label={`${indexer.name} download client`}

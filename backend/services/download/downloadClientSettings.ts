@@ -10,6 +10,11 @@ import { TidarrClient, tidarrClient, tidarrSettings } from "../tidarrClient.ts";
 import { YtdlpClient, ytdlpClient, ytdlpSettings } from "../ytdlpClient.ts";
 import { DeemixClient, deemixClient, deemixSettings } from "../deemixClient.ts";
 import { QbittorrentClient, qbittorrentClient, qbittorrentSettings } from "../qbittorrentClient.ts";
+import {
+  TransmissionClient,
+  transmissionClient,
+  transmissionSettings,
+} from "../transmissionClient.ts";
 
 const definitions = Object.freeze({
   slskd: slskdSettings,
@@ -19,6 +24,7 @@ const definitions = Object.freeze({
   tidarr: tidarrSettings,
   deemix: deemixSettings,
   qbittorrent: qbittorrentSettings,
+  transmission: transmissionSettings,
 });
 
 const factories = {
@@ -29,6 +35,7 @@ const factories = {
   tidarr: () => new TidarrClient(),
   deemix: () => new DeemixClient(),
   qbittorrent: () => new QbittorrentClient(),
+  transmission: () => new TransmissionClient(),
 };
 
 export const downloadClientRegistry = new DownloadClientRegistry([
@@ -39,6 +46,7 @@ export const downloadClientRegistry = new DownloadClientRegistry([
   tidarrClient,
   deemixClient,
   qbittorrentClient,
+  transmissionClient,
 ]);
 
 export function getDownloadClientSettings() {
@@ -53,6 +61,7 @@ type BuiltInDownloadClients = {
   tidarr: TidarrClient;
   deemix: DeemixClient;
   qbittorrent: QbittorrentClient;
+  transmission: TransmissionClient;
 };
 
 export function getDownloadClient<Key extends keyof BuiltInDownloadClients>(

@@ -29,7 +29,7 @@ Aurral manages its own Library, handles single tracks as well as full albums (wh
 
 ### "Isn't this just SoulSync?"
 
-No. SoulSync is a sync and download bridge for Soulseek. Aurral is a full music platform in one container: discovery, scheduled Flows, daily mixes, playlist imports (Spotify, YouTube Music, Last.fm, ListenBrainz, and M3U), multi-source downloads (`slskd`, Usenet, qBittorrent, Tidarr, deemix, `yt-dlp`, and plugins), quality verification and upgrades, tagging, multi-user accounts with friends and Blends, a built-in web player with synced lyrics, and a Subsonic API.
+No. SoulSync is a sync and download bridge for Soulseek. Aurral is a full music platform in one container: discovery, scheduled Flows, daily mixes, playlist imports (Spotify, YouTube Music, Last.fm, ListenBrainz, and M3U), multi-source downloads (`slskd`, Usenet, qBittorrent, Transmission, Tidarr, deemix, `yt-dlp`, and plugins), quality verification and upgrades, tagging, multi-user accounts with friends and Blends, a built-in web player with synced lyrics, and a Subsonic API.
 
 ### "Does it have [insert genre, e.g. gospel]?"
 
@@ -79,7 +79,7 @@ A 24/7 `slskd` server sharing a well-tagged library back to the network gives ma
 
 No. [yt-dlp](/integrations/ytdlp/) is enabled out of the box as the **lowest-priority fallback** so a fresh install actually works in two minutes without configuring three extra services first.
 
-Aurral natively supports [slskd (Soulseek)](/integrations/slskd/), [Usenet (Prowlarr + SABnzbd/NZBGet)](/integrations/usenet/), [qBittorrent (via Prowlarr)](/integrations/qbittorrent/), [Tidarr](/integrations/tidarr/), [deemix](/integrations/deemix/), [Lidarr (via plugin)](/integrations/lidarr/), and custom download plugins.
+Aurral natively supports [slskd (Soulseek)](/integrations/slskd/), [Usenet (Prowlarr + SABnzbd/NZBGet)](/integrations/usenet/), [qBittorrent](/integrations/qbittorrent/) and [Transmission](/integrations/transmission/) (via Prowlarr), [Tidarr](/integrations/tidarr/), [deemix](/integrations/deemix/), [Lidarr (via plugin)](/integrations/lidarr/), and custom download plugins.
 
 - The default quality profile is **Lossless** (prefers FLAC, upgrades up to FLAC standard).
 - Aurral never trusts filenames or search-result bitrates. It inspects the actual downloaded audio file's format, bitrate, bit depth, and sample rate before accepting it.
@@ -88,7 +88,7 @@ Aurral natively supports [slskd (Soulseek)](/integrations/slskd/), [Usenet (Prow
 
 ### "Does it even seed torrents?"
 
-Yes. Aurral uses your own [qBittorrent](/integrations/qbittorrent/) instance and respects its seeding rules. When a torrent finishes, Aurral hardlinks (or copies, if across disks) the audio files into your Library and **leaves the torrent in qBittorrent to seed**. Aurral only cleans it up after qBittorrent itself stops the torrent at whatever ratio or time limit you configured.
+Yes. Aurral uses your own [qBittorrent](/integrations/qbittorrent/) or [Transmission](/integrations/transmission/) instance and respects its seeding rules. When a torrent finishes, Aurral hardlinks (or copies, if across disks) the audio files into your Library and **leaves the torrent in the client to seed**. Aurral only cleans it up after the client itself stops the torrent at whatever ratio or time limit you configured.
 
 ### "How is this not piracy / copyright infringement?"
 

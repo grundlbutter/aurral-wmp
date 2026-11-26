@@ -32,6 +32,7 @@ export const DOWNLOAD_CLIENTS: Partial<Record<string, string>> = {
   deemix: "deemix",
   ytdlp: "yt-dlp",
   qbittorrent: "qBittorrent",
+  transmission: "Transmission",
   share: "Aurral share",
 };
 

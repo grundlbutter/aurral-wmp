@@ -42,6 +42,7 @@ const INTEGRATION_KEYS = [
   "sabnzbd",
   "tidarr",
   "qbittorrent",
+  "transmission",
   "ytdlp",
   "deemix",
   "ticketmaster",

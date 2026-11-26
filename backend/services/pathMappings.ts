@@ -14,6 +14,7 @@ const PATH_MAPPING_SOURCES = new Set([
   "tidarr",
   "deemix",
   "qbittorrent",
+  "transmission",
 ]);
 
 export function syncPathMappings(value: unknown) {

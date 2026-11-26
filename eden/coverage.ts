@@ -13,6 +13,7 @@ export const integrationCoverage = {
   nzbget: { by: "nzbget" },
   sabnzbd: { by: "sabnzbd" },
   qbittorrent: { by: "qbittorrent" },
+  transmission: { missing: "Eden has no Transmission yet; its tests fake the RPC" },
   ytdlp: { by: "core" },
   ticketmaster: { by: "core" },
   metadata: { by: "core" },

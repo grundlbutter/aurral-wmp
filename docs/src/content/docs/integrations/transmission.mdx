@@ -1,0 +1,29 @@
+---
+title: Transmission
+description: Download albums and tracks from torrent indexers through Prowlarr and Transmission.
+---
+
+Aurral searches your torrent indexers in [Prowlarr](/integrations/usenet/#prowlarr) and sends the torrents it picks to Transmission, the way Sonarr and Lidarr do.
+
+## Setup
+
+1. Connect Prowlarr in **Settings > Downloads > Prowlarr**, with one or more torrent audio indexers turned on in Prowlarr.
+2. Mount Transmission's download folder in Aurral, so Aurral can read finished torrents. See [Filesystem and mounts](/getting-started/storage/).
+3. Open **Settings > Downloads > Transmission** and turn on **Enable Transmission**.
+4. Set **Server URL** to Transmission's address, for example `http://transmission:9091`. Aurral adds `/transmission/rpc`; enter the full path instead if a reverse proxy moves it. Fill in **Username** and **Password** if Transmission asks for them.
+5. If necessary, set **Label**, which Transmission shows on Aurral's torrents. The default is `aurral`. Set **Download folder** to keep Aurral's torrents in their own folder, as Transmission sees it. Empty uses Transmission's default folder.
+6. Select **Test connection**.
+
+If the test says Transmission refused Aurral's address, add Aurral's address to `rpc-whitelist` in Transmission's settings, or turn the whitelist off.
+
+## Path mapping
+
+When Transmission reports its downloads under another path than Aurral sees, add a mapping in **Settings > Downloads > Remote path mappings**, with **Applies to** set to **Transmission**. When both containers mount the same folder at the same path, no mapping is needed.
+
+## Behavior
+
+Torrents hold albums, so for a single track Aurral searches for the track's album. Aurral adds a torrent file paused, checks its file list against the release, and tells Transmission to download only the tracks you asked for before it starts. A magnet link has to start to fetch its file list, so it may download some files Aurral then skips. When the file names don't show the release or the track, the whole album downloads and Aurral checks the files by their tags. A torrent Transmission already has is left alone, and Aurral tries the next result.
+
+Aurral skips torrents without seeders and tries the best quality your quality profile allows first. When a torrent finishes, Aurral links its audio files, or copies them when they are on another disk, and checks them like any other source. A torrent Aurral imports from stays in Transmission to seed, with the `aurral-imported` label. Once Transmission stops it at its seed ratio or idle limit, Aurral removes the torrent and its files within the hour. Without a seeding limit in Transmission, the torrent seeds until you remove it. A torrent Aurral cancels or doesn't import from is removed right away. Removing seeded torrents needs labels, which came in Transmission 3.0.
+
+See [Download source priority and fallback](/integrations/usenet/#download-source-priority-and-fallback).
