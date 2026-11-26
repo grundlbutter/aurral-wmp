@@ -11,6 +11,7 @@ import {
   withAlpha,
 } from "./themeColor.ts";
 import { THEME_PRESETS } from "./themePresets.ts";
+import { GLASS_THEME, loadGlassSkin } from "../skins/glass/theme.ts";
 import { isRecord } from "../../../lib/isRecord.ts";
 import { unknownList } from "../../../lib/unknownList.ts";
 import { serverScoped } from "./server.ts";
@@ -110,7 +111,7 @@ export const AURRAL_THEME = {
   dark: { background: "#000000", text: "#ffffff", accent: "#b3b3b3" },
 } satisfies Theme;
 
-export const BUILT_IN_THEMES: [Theme, ...Theme[]] = [AURRAL_THEME, ...THEME_PRESETS];
+export const BUILT_IN_THEMES: [Theme, ...Theme[]] = [AURRAL_THEME, GLASS_THEME, ...THEME_PRESETS];
 const BUILT_IN_THEME_IDS = new Set<string>(BUILT_IN_THEMES.map((theme) => theme.id));
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -716,6 +717,7 @@ function render({ animate = false }: { animate?: boolean } = {}) {
       : getThemePalette(theme, mode);
   root.dataset.theme = mode;
   root.dataset.themeId = theme.id;
+  if (theme.id === GLASS_THEME.id) void loadGlassSkin();
   root.style.colorScheme = mode;
   paint(root, palette, { animate, fallback: getThemePalette(theme, mode) });
   if (!preview) writePaintCache(document, theme);

@@ -1,0 +1,13 @@
+services:
+  aurral:
+    build:
+      context: .
+      args:
+        GITHUB_REPO: grundlbutter/aurral-wmp
+    image: aurral-wmp:local
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./config:/config
+      - ./data:/data
