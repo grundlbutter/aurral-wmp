@@ -36,7 +36,7 @@
 - **Share** tracks, albums, and playlists as links, publish public playlists, or let friends play straight from your Library.
 - **Plugins** add download sources, imports, and actions when you want them.
 
-Connect slskd, Usenet, qBittorrent, Tidarr, deemix, or download plugins for lossless music, with built-in yt-dlp ready as a fallback out of the box. Every integration is optional. [Read the docs](https://docs.aurral.org/) for the full tour, or check the [FAQ](https://docs.aurral.org/faq/).
+Connect slskd, Usenet, qBittorrent, Transmission, Tidarr, deemix, or download plugins for lossless music, with built-in yt-dlp ready as a fallback out of the box. Every integration is optional. [Read the docs](https://docs.aurral.org/) for the full tour, or check the [FAQ](https://docs.aurral.org/faq/).
 
 ## Quick start
 

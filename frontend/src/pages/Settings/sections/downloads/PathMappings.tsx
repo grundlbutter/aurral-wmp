@@ -18,6 +18,7 @@ const PATH_MAPPING_SOURCE_OPTIONS = [
   { value: "sabnzbd", label: "SABnzbd" },
   { value: "tidarr", label: "Tidarr" },
   { value: "qbittorrent", label: "qBittorrent" },
+  { value: "transmission", label: "Transmission" },
   { value: "deemix", label: "deemix" },
 ];
 

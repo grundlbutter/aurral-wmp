@@ -62,7 +62,14 @@ export type Upgrade = { currentTier: string | null } | null;
 export class DownloadSourceError extends Error {}
 export class DownloadFailedError extends DownloadSourceError {}
 
-export const NATIVE_SOURCE_IDS = ["deemix", "qbittorrent", "tidarr", "usenet", "ytdlp"] as const;
+export const NATIVE_SOURCE_IDS = [
+  "deemix",
+  "qbittorrent",
+  "tidarr",
+  "transmission",
+  "usenet",
+  "ytdlp",
+] as const;
 
 // Plugins and native sources implement this. Aurral matches, judges, stages,
 // and files what a source returns, so a source only finds and fetches. A

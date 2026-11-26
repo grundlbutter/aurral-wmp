@@ -206,7 +206,7 @@ test("an upgrade tries its pinned release alone, no attempt for its album takes 
       true,
       [upgradeId],
       "upgrade-album-release",
-      ["slskd", "usenet", "tidarr", "deemix", "qbittorrent"],
+      ["slskd", "usenet", "tidarr", "deemix", "qbittorrent", "transmission"],
     ],
   );
 

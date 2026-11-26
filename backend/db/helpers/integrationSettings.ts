@@ -84,6 +84,16 @@ export const integrationSettingsSchema = v.looseObject({
     priority: count,
     albumPriority: count,
   }),
+  transmission: service({
+    enabled: flag,
+    url: text,
+    username: text,
+    password: text,
+    label: text,
+    directory: text,
+    priority: count,
+    albumPriority: count,
+  }),
   ytdlp: service({ enabled: flag, priority: count, stagingPath: text, cookiesPath: text }),
   deemix: service({
     enabled: flag,

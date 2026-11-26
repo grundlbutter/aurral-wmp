@@ -196,6 +196,16 @@ const SYSTEM_TASKS = {
       await removeSeededTorrents();
     },
   },
+  "transmission-cleanup": {
+    queue: "maintenance",
+    label: "Transmission cleanup",
+    description: "Removes imported torrents once Transmission stops seeding them.",
+    schedule: { everyMs: HOUR },
+    async run() {
+      const { removeSeededTransmissionTorrents } = await import("../transmissionSource.ts");
+      await removeSeededTransmissionTorrents();
+    },
+  },
   "flow-reuse-repair": {
     queue: "system",
     label: "Playlist file reuse repair",
