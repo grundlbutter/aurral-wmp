@@ -1,0 +1,44 @@
+:root[data-theme-id="glass"] {
+  --font-sans: "Segoe UI", selawik, system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --aurral-glass-top: #a9c7e6;
+  --aurral-glass-mid: #6f98c6;
+  --aurral-glass-bottom: #4a73a3;
+  --aurral-glass-shine: rgb(255 255 255 / 0.55);
+  --aurral-glass-edge: #20385c;
+  --aurral-glass-text: #0c1d33;
+  --aurral-command-top: #f4f8fd;
+  --aurral-command-bottom: #dce8f5;
+  --aurral-command-edge: #9fb3cc;
+  --aurral-command-text: #1c2c42;
+  --aurral-transport-top: #3b4048;
+  --aurral-transport-mid: #1a1d22;
+  --aurral-transport-split: #040506;
+  --aurral-transport-bottom: #0f1216;
+  --aurral-transport-shine: rgb(255 255 255 / 0.18);
+  --aurral-transport-text: #e6edf6;
+  --aurral-orb-glow: #3fa2ff;
+  --aurral-seek-top: #8fd0ff;
+  --aurral-seek-bottom: #1f73d6;
+  --aurral-progress-top: #7be36b;
+  --aurral-progress-bottom: #06b025;
+}
+
+:root[data-theme-id="glass"][data-theme="dark"] {
+  --aurral-hover-fill: rgb(90 150 230 / 0.13);
+  --aurral-hover-edge: rgb(120 170 240 / 0.35);
+  --aurral-select-top: #24548f;
+  --aurral-select-bottom: #183e6c;
+  --aurral-select-edge: #4a8ad6;
+  --aurral-select-text: #ffffff;
+  --aurral-group-heading: #8fc2ff;
+}
+
+:root[data-theme-id="glass"][data-theme="light"] {
+  --aurral-hover-fill: #eaf3fd;
+  --aurral-hover-edge: #b8d6fb;
+  --aurral-select-top: #dcebfc;
+  --aurral-select-bottom: #c1dbfc;
+  --aurral-select-edge: #7da2ce;
+  --aurral-select-text: #1e1e1e;
+  --aurral-group-heading: #1e3287;
+}

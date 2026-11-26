@@ -126,6 +126,34 @@
   --aurral-z-popover: 60;
   --aurral-z-toast: 70;
   --aurral-z-tooltip: 80;
+  --aurral-glass-top: var(--aurral-chrome);
+  --aurral-glass-mid: var(--aurral-chrome);
+  --aurral-glass-bottom: var(--aurral-chrome);
+  --aurral-glass-shine: transparent;
+  --aurral-glass-edge: var(--aurral-border);
+  --aurral-glass-text: var(--aurral-text);
+  --aurral-command-top: var(--aurral-chrome);
+  --aurral-command-bottom: var(--aurral-chrome);
+  --aurral-command-edge: var(--aurral-border);
+  --aurral-command-text: var(--aurral-text);
+  --aurral-hover-fill: var(--aurral-surface-hover);
+  --aurral-hover-edge: transparent;
+  --aurral-select-top: var(--aurral-surface-selected);
+  --aurral-select-bottom: var(--aurral-surface-selected);
+  --aurral-select-edge: transparent;
+  --aurral-select-text: var(--aurral-text);
+  --aurral-group-heading: var(--aurral-text);
+  --aurral-transport-top: var(--aurral-chrome);
+  --aurral-transport-mid: var(--aurral-chrome);
+  --aurral-transport-split: var(--aurral-chrome);
+  --aurral-transport-bottom: var(--aurral-chrome);
+  --aurral-transport-shine: transparent;
+  --aurral-transport-text: var(--aurral-text);
+  --aurral-orb-glow: var(--aurral-accent);
+  --aurral-seek-top: var(--aurral-accent);
+  --aurral-seek-bottom: var(--aurral-accent);
+  --aurral-progress-top: var(--aurral-success);
+  --aurral-progress-bottom: var(--aurral-success);
 }
 
 @media (prefers-reduced-motion: reduce) {
