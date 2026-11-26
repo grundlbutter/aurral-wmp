@@ -26,12 +26,12 @@ type SidebarPlaylistsProps = {
 
 type Entry = { id: string; name: string; kind: string; path: string };
 
-function usePlaylistOrder() {
+export function usePlaylistOrder(enabled = true) {
   const { user } = useAuth();
   const { showError } = useToast();
   const queryClient = useQueryClient();
   const options = playlistOrderQueryOptions(user?.id);
-  const { data, isLoading } = useQuery(options);
+  const { data, isLoading } = useQuery({ ...options, enabled });
   const [dropped, setDropped] = useState<string[]>();
   const { mutate } = useMutation({
     scope: { id: "playlist-order" },

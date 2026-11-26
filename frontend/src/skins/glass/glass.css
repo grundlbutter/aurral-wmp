@@ -79,6 +79,17 @@
   --aurral-trough-edge: #05080c;
   --aurral-nav-top: #0f1a2b;
   --aurral-nav-bottom: #0a111d;
+  --aurral-scroll-track-top: #0e1521;
+  --aurral-scroll-track-bottom: #121a27;
+  --aurral-scroll-track-edge: #1b2738;
+  --aurral-scroll-thumb-top: #3a4558;
+  --aurral-scroll-thumb-bottom: #283142;
+  --aurral-scroll-thumb-edge: #05080c;
+  --aurral-scroll-thumb-hot-top: #3b5f8e;
+  --aurral-scroll-thumb-hot-bottom: #1b3a62;
+  --aurral-scroll-thumb-hot-edge: #4a8ad6;
+  --aurral-scroll-grip: #6b7a90;
+  --aurral-focus-ring: #6fb6ff;
 }
 
 :root[data-theme-id="glass"][data-theme="light"] {
@@ -121,15 +132,82 @@
   --aurral-trough-edge: #6b7c8f;
   --aurral-nav-top: #ffffff;
   --aurral-nav-bottom: #f6f9fc;
+  --aurral-scroll-track-top: #e7e7e7;
+  --aurral-scroll-track-bottom: #f5f5f5;
+  --aurral-scroll-track-edge: #dcdcdc;
+  --aurral-scroll-thumb-top: #f5f5f5;
+  --aurral-scroll-thumb-bottom: #dcdcdc;
+  --aurral-scroll-thumb-edge: #959595;
+  --aurral-scroll-thumb-hot-top: #e3f4fc;
+  --aurral-scroll-thumb-hot-bottom: #a9dbf6;
+  --aurral-scroll-thumb-hot-edge: #3c7fb1;
+  --aurral-scroll-grip: #8a8a8a;
+  --aurral-focus-ring: #3c7fb1;
+}
+
+:root[data-theme-id="glass"] .now-playing__seek::-webkit-slider-runnable-track {
+  background:
+    linear-gradient(var(--aurral-seek-top), var(--aurral-seek-bottom)) 0 0 / var(--seek-percent)
+      100% no-repeat,
+    var(--aurral-border-strong);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--aurral-orb-glow) 45%, transparent);
+}
+
+:root[data-theme-id="glass"] .now-playing__seek::-moz-range-progress {
+  background: linear-gradient(var(--aurral-seek-top), var(--aurral-seek-bottom));
+}
+
+:root[data-theme-id="glass"] .now-playing__seek::-webkit-slider-thumb {
+  border: 1px solid var(--aurral-transport-split);
+  background: radial-gradient(
+    circle at 40% 35%,
+    var(--aurral-transport-text),
+    var(--aurral-seek-top)
+  );
+}
+
+:root[data-theme-id="glass"] .now-playing__seek::-moz-range-thumb {
+  border: 1px solid var(--aurral-transport-split);
+  background: radial-gradient(
+    circle at 40% 35%,
+    var(--aurral-transport-text),
+    var(--aurral-seek-top)
+  );
+}
+
+:root[data-theme-id="glass"] {
+  scrollbar-color: var(--aurral-scroll-thumb-bottom) var(--aurral-scroll-track-bottom);
+}
+
+:root[data-theme-id="glass"] :focus-visible {
+  outline-color: var(--aurral-focus-ring);
+}
+
+:root[data-theme-id="glass"] ::-webkit-scrollbar-track {
+  background: linear-gradient(
+    90deg,
+    var(--aurral-scroll-track-top),
+    var(--aurral-scroll-track-bottom)
+  );
+}
+
+:root[data-theme-id="glass"] ::-webkit-scrollbar-thumb {
+  border: 1px solid var(--aurral-scroll-thumb-edge);
+  border-radius: var(--aurral-radius-xs);
+  background: linear-gradient(
+    90deg,
+    var(--aurral-scroll-thumb-top),
+    var(--aurral-scroll-thumb-bottom)
+  );
 }
 
 @media (min-width: 768px) {
   :root[data-theme-id="glass"] {
-    --aurral-space-outer: 0;
+    --aurral-space-outer: 0px;
   }
 
   :root[data-theme-id="glass"] .app-shell {
-    --app-gutter: 0;
+    --app-gutter: 0px;
     --glass-band: 3.5rem;
     --command-band: 2.25rem;
 
@@ -228,7 +306,7 @@
   }
 
   :root[data-theme-id="glass"] .glass-orb:focus-visible {
-    outline: 2px solid var(--aurral-ring);
+    outline: 2px solid var(--aurral-focus-ring);
     outline-offset: 2px;
   }
 
@@ -408,7 +486,7 @@
   }
 
   :root[data-theme-id="glass"] .app-topbar-tabs__tab:focus-visible {
-    outline: 2px solid var(--aurral-ring);
+    outline: 2px solid var(--aurral-focus-ring);
     outline-offset: -2px;
   }
 
@@ -491,6 +569,171 @@
     color: var(--aurral-text);
     font-size: var(--aurral-font-sm);
     font-weight: 600;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree {
+    padding: 0.375rem 0.25rem 0.75rem;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group + .glass-tree__group {
+    margin-top: 0.5rem;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="library"],
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="friends"] {
+    --glass-node: var(--aurral-info);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="playlists"],
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="shows"] {
+    --glass-node: var(--aurral-warning);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="discover"] {
+    --glass-node: var(--aurral-review);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="flows"] {
+    --glass-node: var(--aurral-success);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__group[data-nav="activity"],
+  :root[data-theme-id="glass"] .glass-tree__row[data-view="favorites"] {
+    --glass-node: var(--aurral-danger);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__head {
+    display: flex;
+    align-items: center;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__twist {
+    display: inline-grid;
+    width: 1rem;
+    height: 1.75rem;
+    flex: none;
+    place-items: center;
+    border-radius: var(--aurral-radius-xs);
+    color: var(--aurral-text-subtle);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__twist svg {
+    width: 0.5625rem;
+    height: 0.5625rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linejoin: round;
+    transition: rotate var(--aurral-duration-fast) var(--aurral-ease-standard);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__twist[aria-expanded="true"] svg {
+    fill: currentColor;
+    rotate: 45deg;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :root[data-theme-id="glass"] .glass-tree__twist:hover {
+      color: var(--aurral-info);
+    }
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__twist:focus-visible {
+    outline: 2px solid var(--aurral-focus-ring);
+    outline-offset: -2px;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__title {
+    min-width: 0;
+    flex: 1;
+    margin-inline: 0;
+    font-weight: 600;
+    text-align: start;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__items {
+    padding-left: 1rem;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__row {
+    margin-inline: 0;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree .sidebar-link__label {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__note,
+  :root[data-theme-id="glass"] .glass-tree__empty {
+    color: var(--aurral-text-subtle);
+    font-size: var(--aurral-font-xs);
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__note {
+    flex: none;
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__empty {
+    padding: 0.25rem 0.5rem 0.25rem 2.125rem;
+  }
+
+  :root[data-theme-id="glass"] .app-main-scrollbar {
+    width: 1.0625rem;
+    border-left: 1px solid var(--aurral-scroll-track-edge);
+    border-radius: 0;
+    background: linear-gradient(
+      90deg,
+      var(--aurral-scroll-track-top),
+      var(--aurral-scroll-track-bottom)
+    );
+  }
+
+  :root[data-theme-id="glass"] .app-main-scrollbar.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  :root[data-theme-id="glass"] .app-main-scrollbar__thumb {
+    border-radius: 0;
+  }
+
+  :root[data-theme-id="glass"] .app-main-scrollbar__thumb::after {
+    --glass-thumb-top: var(--aurral-scroll-thumb-top);
+    --glass-thumb-bottom: var(--aurral-scroll-thumb-bottom);
+
+    inset: 0 1px;
+    width: auto;
+    border: 1px solid var(--aurral-scroll-thumb-edge);
+    border-radius: var(--aurral-radius-xs);
+    background:
+      repeating-linear-gradient(var(--aurral-scroll-grip) 0 1px, transparent 1px 2px) center /
+        0.4375rem 0.4375rem no-repeat,
+      linear-gradient(90deg, var(--glass-thumb-top), var(--glass-thumb-bottom));
+    opacity: 1;
+  }
+
+  :root[data-theme-id="glass"] .app-main-scrollbar__thumb:active::after {
+    --glass-thumb-top: var(--aurral-scroll-thumb-hot-top);
+    --glass-thumb-bottom: var(--aurral-scroll-thumb-hot-bottom);
+
+    border-color: var(--aurral-scroll-thumb-hot-edge);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :root[data-theme-id="glass"] .app-main-scrollbar__thumb:hover::after {
+      --glass-thumb-top: var(--aurral-scroll-thumb-hot-top);
+      --glass-thumb-bottom: var(--aurral-scroll-thumb-hot-bottom);
+
+      border-color: var(--aurral-scroll-thumb-hot-edge);
+    }
+  }
+
+  :root[data-theme-id="glass"] .glass-tree__row.is-dragging {
+    z-index: var(--aurral-z-raised);
+    opacity: 0.85;
   }
 
   :root[data-theme-id="glass"] .global-player {
@@ -625,7 +868,7 @@
     background:
       radial-gradient(ellipse 70% 45% at 50% 22%, var(--aurral-glass-shine), transparent 70%),
       radial-gradient(circle at 50% 75%, var(--aurral-play-top), var(--aurral-transport-mid) 70%);
-    outline: 2px solid var(--aurral-ring);
+    outline: 2px solid var(--aurral-focus-ring);
     outline-offset: 3px;
   }
 
@@ -716,7 +959,7 @@
   :root[data-theme-id="glass"]
     .global-player__progress-wrap:focus-within
     .global-player__progress-track {
-    outline: 2px solid var(--aurral-ring);
+    outline: 2px solid var(--aurral-focus-ring);
     outline-offset: 2px;
   }
 
@@ -1087,7 +1330,7 @@
   }
 
   :root[data-theme-id="glass"] :is(.pill-toggle, input[type="checkbox"]):focus-visible {
-    outline: 2px solid var(--aurral-ring);
+    outline: 2px solid var(--aurral-focus-ring);
     outline-offset: 2px;
     box-shadow: inset 0 0 0 1px var(--aurral-check-edge);
   }
@@ -1355,37 +1598,183 @@
     backdrop-filter: blur(12px);
   }
 
-  :root[data-theme-id="glass"] .now-playing__seek::-webkit-slider-runnable-track {
-    background:
-      linear-gradient(var(--aurral-seek-top), var(--aurral-seek-bottom)) 0 0 / var(--seek-percent)
-        100% no-repeat,
-      var(--aurral-border-strong);
-    box-shadow: 0 0 6px color-mix(in srgb, var(--aurral-orb-glow) 45%, transparent);
-  }
-
-  :root[data-theme-id="glass"] .now-playing__seek::-moz-range-progress {
-    background: linear-gradient(var(--aurral-seek-top), var(--aurral-seek-bottom));
-  }
-
-  :root[data-theme-id="glass"] .now-playing__seek::-webkit-slider-thumb {
-    border: 1px solid var(--aurral-transport-split);
-    background: radial-gradient(
-      circle at 40% 35%,
-      var(--aurral-transport-text),
-      var(--aurral-seek-top)
-    );
-  }
-
-  :root[data-theme-id="glass"] .now-playing__seek::-moz-range-thumb {
-    border: 1px solid var(--aurral-transport-split);
-    background: radial-gradient(
-      circle at 40% 35%,
-      var(--aurral-transport-text),
-      var(--aurral-seek-top)
-    );
-  }
-
   :root[data-theme-id="glass"] .fullscreen-player .player-queue__heading {
     color: var(--aurral-seek-top);
+  }
+}
+
+@media (max-width: 767px) {
+  :root[data-theme-id="glass"] .app-topbar {
+    border-bottom: 1px solid var(--aurral-glass-edge);
+    background:
+      linear-gradient(var(--aurral-glass-shine), transparent 55%),
+      linear-gradient(
+        var(--aurral-glass-top),
+        var(--aurral-glass-mid) 60%,
+        var(--aurral-glass-bottom)
+      );
+    color: var(--aurral-glass-text);
+  }
+
+  :root[data-theme-id="glass"] :is(.app-mobile-back, .app-header-actions .app-header-link) {
+    color: var(--aurral-glass-text);
+  }
+
+  :root[data-theme-id="glass"] .global-search__box {
+    border: 1px solid var(--aurral-field-edge);
+    border-radius: var(--aurral-radius-xs);
+    background: linear-gradient(var(--aurral-field-top), var(--aurral-field-bottom));
+    box-shadow: inset 0 1px 2px var(--aurral-glass-edge);
+    color: var(--aurral-field-text);
+  }
+
+  :root[data-theme-id="glass"] .global-search__input {
+    color: var(--aurral-field-text);
+  }
+
+  :root[data-theme-id="glass"] .global-search__icon {
+    color: var(--aurral-glass-bottom);
+  }
+
+  :root[data-theme-id="glass"] .global-search__placeholder {
+    color: var(--aurral-field-muted);
+    font-style: italic;
+  }
+
+  :root[data-theme-id="glass"] .app-section-bar {
+    gap: 0.25rem;
+    padding: 0.3125rem 0.5rem;
+    border-bottom: 1px solid var(--aurral-command-edge);
+    background: linear-gradient(var(--aurral-command-top), var(--aurral-command-bottom));
+  }
+
+  :root[data-theme-id="glass"] .app-section-bar__chip {
+    height: 1.875rem;
+    padding-inline: 0.625rem;
+    border: 1px solid transparent;
+    border-radius: var(--aurral-radius-xs);
+    color: var(--aurral-command-text);
+    font-size: var(--aurral-font-sm);
+    font-weight: 400;
+  }
+
+  :root[data-theme-id="glass"] .app-section-bar__chip.is-active {
+    border-color: var(--aurral-command-hot-edge);
+    background: linear-gradient(var(--aurral-command-hot-top), var(--aurral-command-hot-bottom));
+    color: var(--aurral-command-text);
+    font-weight: 600;
+  }
+
+  :root[data-theme-id="glass"] .native-library-track.is-active {
+    background: linear-gradient(var(--aurral-select-top), var(--aurral-select-bottom));
+    box-shadow: inset 0 0 0 1px var(--aurral-select-edge);
+    color: var(--aurral-select-text);
+  }
+
+  :root[data-theme-id="glass"]
+    .native-library-track.is-active
+    :is(.native-library-track__title > span, .native-library-track__artist) {
+    color: var(--aurral-select-text);
+  }
+
+  :root[data-theme-id="glass"] .global-player {
+    background: linear-gradient(
+      var(--aurral-transport-top),
+      var(--aurral-transport-mid) 48%,
+      var(--aurral-transport-split) 50%,
+      var(--aurral-transport-bottom)
+    );
+    box-shadow: inset 0 1px 0 var(--aurral-transport-shine);
+    color: var(--aurral-transport-text);
+  }
+
+  :root[data-theme-id="glass"] .global-player__mini .global-player__title {
+    color: var(--aurral-transport-text);
+  }
+
+  :root[data-theme-id="glass"] .global-player__mini .global-player__subtitle {
+    color: var(--aurral-transport-muted);
+  }
+
+  :root[data-theme-id="glass"] .global-player__art--mini {
+    border: 1px solid var(--aurral-transport-split);
+    border-radius: var(--aurral-radius-xs);
+  }
+
+  :root[data-theme-id="glass"] .global-player__mini-control {
+    color: var(--aurral-transport-text);
+  }
+
+  :root[data-theme-id="glass"]
+    .global-player__mini
+    > .global-player__mini-control:nth-last-child(2) {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-inline: 0.125rem;
+    border: 1px solid var(--aurral-transport-split);
+    background:
+      radial-gradient(ellipse 70% 45% at 50% 22%, var(--aurral-glass-shine), transparent 70%),
+      radial-gradient(circle at 50% 75%, var(--aurral-play-top), var(--aurral-transport-mid) 70%);
+    box-shadow:
+      0 0 0 2px var(--aurral-transport-top),
+      0 0 12px color-mix(in srgb, var(--aurral-orb-glow) 55%, transparent),
+      inset 0 -4px 10px color-mix(in srgb, var(--aurral-orb-glow) 45%, transparent);
+  }
+
+  :root[data-theme-id="glass"]
+    .global-player__mini
+    > .global-player__mini-control:nth-last-child(2)
+    svg {
+    width: var(--aurral-icon);
+    height: var(--aurral-icon);
+    filter: drop-shadow(0 0 3px var(--aurral-orb-glow));
+  }
+
+  :root[data-theme-id="glass"] .global-player__mini-progress {
+    height: 3px;
+    background: var(--aurral-seek-track);
+  }
+
+  :root[data-theme-id="glass"] .global-player__mini-progress span {
+    background: linear-gradient(var(--aurral-seek-top), var(--aurral-seek-bottom));
+    box-shadow: 0 0 6px var(--aurral-orb-glow);
+  }
+
+  :root[data-theme-id="glass"] .app-mobile-nav {
+    border-top: 1px solid var(--aurral-transport-mid);
+    background: var(--aurral-transport-split);
+  }
+
+  :root[data-theme-id="glass"] .app-mobile-nav__item {
+    color: var(--aurral-transport-muted);
+  }
+
+  :root[data-theme-id="glass"] .app-mobile-nav__item.is-active {
+    color: var(--aurral-transport-text);
+  }
+
+  :root[data-theme-id="glass"] .app-mobile-nav__item.is-active svg {
+    color: var(--aurral-orb-glow);
+    filter: drop-shadow(0 0 5px var(--aurral-orb-glow));
+  }
+
+  :root[data-theme-id="glass"] .now-playing__control--primary {
+    border: 1px solid var(--aurral-transport-split);
+    background:
+      radial-gradient(ellipse 70% 45% at 50% 22%, var(--aurral-glass-shine), transparent 70%),
+      radial-gradient(circle at 50% 75%, var(--aurral-play-top), var(--aurral-transport-mid) 70%);
+    box-shadow:
+      0 0 0 2px var(--aurral-transport-top),
+      0 0 18px color-mix(in srgb, var(--aurral-orb-glow) 55%, transparent),
+      inset 0 -5px 12px color-mix(in srgb, var(--aurral-orb-glow) 45%, transparent);
+    color: var(--aurral-transport-text);
+  }
+
+  :root[data-theme-id="glass"] .now-playing__control--primary svg {
+    filter: drop-shadow(0 0 4px var(--aurral-orb-glow));
+  }
+
+  :root[data-theme-id="glass"] .now-playing__control--toggle.is-active {
+    color: var(--aurral-orb-glow);
   }
 }
