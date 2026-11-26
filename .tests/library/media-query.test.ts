@@ -950,6 +950,64 @@ test("library sorts follow arrival, plays, release date, and favorites", () => {
   }
 });
 
+test("library track pages sort by album, then disc and track number, before pagination", () => {
+  const key = `query-album-sort-${process.pid}-${Date.now()}`;
+  const artist = upsertLibraryArtist({ identityKey: `${key}:artist`, name: "Album Sort Owner" });
+  const beta = upsertLibraryAlbum({
+    identityKey: `${key}:beta`,
+    artistId: artist.id,
+    title: "Beta",
+  });
+  const alpha = upsertLibraryAlbum({
+    identityKey: `${key}:alpha`,
+    artistId: artist.id,
+    title: "Alpha",
+  });
+  const fixtures = [
+    { album: beta, title: "Aardvark", discNumber: 1, trackNumber: 2 },
+    { album: beta, title: "Zebra", discNumber: 1, trackNumber: 1 },
+    { album: beta, title: "Middle", discNumber: 2, trackNumber: 1 },
+    { album: alpha, title: "Only", discNumber: 1, trackNumber: 1 },
+  ];
+  try {
+    for (const [index, { album, title, discNumber, trackNumber }] of fixtures.entries()) {
+      const track = upsertLibraryTrack({
+        identityKey: `${key}:track-${index}`,
+        title,
+        artistName: "Album Sort Owner",
+      });
+      linkLibraryAlbumTrack({ albumId: album.id, trackId: track.id, discNumber, trackNumber });
+      upsertLibraryMediaFile({
+        trackId: track.id,
+        albumId: album.id,
+        source: "aurral",
+        path: `/tmp/${key}/${index}.flac`,
+      });
+    }
+    const titles = (direction: string) =>
+      [1, 2, 3, 4].map(
+        (page) =>
+          getLibraryPage({
+            kind: "tracks",
+            artistId: artist.id,
+            sort: "album",
+            direction,
+            page,
+            pageSize: 1,
+          }).items[0]?.title,
+      );
+
+    assert.deepEqual(titles("asc"), ["Only", "Zebra", "Aardvark", "Middle"]);
+    assert.deepEqual(titles("desc"), ["Zebra", "Aardvark", "Middle", "Only"]);
+  } finally {
+    db.prepare("DELETE FROM library_media_files WHERE path LIKE ?").run(`/tmp/${key}/%`);
+    db.prepare("DELETE FROM library_album_tracks WHERE album_id IN (?, ?)").run(beta.id, alpha.id);
+    db.prepare("DELETE FROM library_tracks WHERE identity_key LIKE ?").run(`${key}:track-%`);
+    db.prepare("DELETE FROM library_albums WHERE id IN (?, ?)").run(beta.id, alpha.id);
+    db.prepare("DELETE FROM library_artists WHERE id = ?").run(artist.id);
+  }
+});
+
 test("library album track pages keep the selected album relationship", () => {
   const key = `query-album-scope-${process.pid}-${Date.now()}`;
   const artist = upsertLibraryArtist({ identityKey: `${key}:artist`, name: "Eve 6" });

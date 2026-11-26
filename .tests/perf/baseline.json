@@ -57,10 +57,10 @@
   },
   "library artist and track sorts": {
     "queries": {
-      "cold": 69,
-      "warm": 66
+      "cold": 90,
+      "warm": 87
     },
-    "bytes": 423044,
+    "bytes": 550632,
     "scans": []
   },
   "library genres": {

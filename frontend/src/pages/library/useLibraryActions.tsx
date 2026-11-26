@@ -107,6 +107,7 @@ import {
   reserveUniquePlaylistName,
 } from "../../utils/staticPlaylists.ts";
 import { trackDownloadActionLabel } from "../../utils/trackDownloadLabel.ts";
+import { formatQualityChip } from "../../utils/formatQuality.ts";
 
 type LibraryInfoState = LibraryTarget & {
   artist?: LibraryArtist | null;
@@ -1375,6 +1376,7 @@ export function useLibraryActions({
         label: albumName,
         to: libraryAlbumPath(album),
       },
+      quality: formatQualityChip(file?.quality),
       time: formatDuration(trackDurationMs(track)) || (awaitingRelease ? "—" : "Unavailable"),
       timeMissing: !file,
       active,

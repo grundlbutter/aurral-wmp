@@ -37,11 +37,12 @@ const SORTS = [
 ] satisfies SelectOption<string>[];
 
 const ARTIST_SORTS = SORTS.filter((sort) => sort.value !== "artist");
+const TRACK_SORTS = [...SORTS.slice(0, 2), { value: "album", label: "Album" }, ...SORTS.slice(2)];
 
 const LIBRARY_SORT_OPTIONS: Partial<Record<LibraryViewId, SelectOption<string>[]>> = {
   favorites: [{ value: "favorited", label: "Date favorited" }, ...SORTS],
   albums: SORTS,
-  tracks: SORTS,
+  tracks: TRACK_SORTS,
   artists: ARTIST_SORTS,
   "album-artists": ARTIST_SORTS,
   genres: SORTS.slice(0, 1),
