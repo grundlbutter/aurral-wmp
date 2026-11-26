@@ -41,6 +41,7 @@ import { isLibrarySectionPath, useDiscoverRecent } from "../contexts/DiscoverRec
 import { isRecord } from "../../../lib/isRecord.ts";
 import { serverMenuItems } from "./serverMenuItems";
 import { HOSTED } from "../utils/server.ts";
+import { useGlassSkin } from "../skins/glass/useGlassSkin.ts";
 
 const SIDEBAR_THRESHOLD = 100;
 const SIDEBAR_MIN = 56;
@@ -50,6 +51,7 @@ const MOBILE_SHEET_EXIT_MS = 180;
 const PLAYER_MINIMIZED_KEY = "playerMinimized";
 
 const SettingsModal = lazy(() => import("../pages/Settings/SettingsModal"));
+const GlassAddressBar = lazy(() => import("../skins/glass/GlassAddressBar.tsx"));
 
 type ScrollbarDrag = { pointerId: number; grabOffset: number };
 type SidebarResizeSession = { pointerId: number; left: number; grabOffset: number };
@@ -116,6 +118,7 @@ function Layout({ children, headerActions }: LayoutProps) {
   const scrollPositionsRef = useRef(new Map<string, number>());
   const scrolledPageRef = useRef<{ pathname: string; search: string } | null>(null);
   const sectionNav = useSectionNav();
+  const glassSkin = useGlassSkin();
   const sectionRoot = sectionNav?.root ? sectionNav : null;
   const { isDiscoverSectionActive } = useDiscoverRecent();
   const sectionBarRef = useRef<HTMLElement>(null);
@@ -524,6 +527,12 @@ function Layout({ children, headerActions }: LayoutProps) {
         }${isPlayerActive ? " app-content--player-active" : ""}`}
       >
         <header className="app-topbar">
+          {glassSkin && hasRail ? (
+            <Suspense fallback={null}>
+              <GlassAddressBar />
+            </Suspense>
+          ) : null}
+
           {!sectionRoot ? (
             <button
               type="button"

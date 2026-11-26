@@ -136,6 +136,19 @@
   --aurral-command-bottom: var(--aurral-chrome);
   --aurral-command-edge: var(--aurral-border);
   --aurral-command-text: var(--aurral-text);
+  --aurral-command-hot-top: var(--aurral-surface-selected);
+  --aurral-command-hot-bottom: var(--aurral-surface-selected);
+  --aurral-command-hot-edge: var(--aurral-border-strong);
+  --aurral-field-top: var(--aurral-surface-field);
+  --aurral-field-bottom: var(--aurral-surface-field);
+  --aurral-field-edge: var(--aurral-border);
+  --aurral-field-text: var(--aurral-text);
+  --aurral-field-muted: var(--aurral-text-muted);
+  --aurral-orb-top: var(--aurral-accent);
+  --aurral-orb-bottom: var(--aurral-accent);
+  --aurral-orb-edge: var(--aurral-border-strong);
+  --aurral-nav-top: var(--aurral-chrome);
+  --aurral-nav-bottom: var(--aurral-chrome);
   --aurral-hover-fill: var(--aurral-surface-hover);
   --aurral-hover-edge: transparent;
   --aurral-select-top: var(--aurral-surface-selected);
@@ -149,9 +162,12 @@
   --aurral-transport-bottom: var(--aurral-chrome);
   --aurral-transport-shine: transparent;
   --aurral-transport-text: var(--aurral-text);
+  --aurral-transport-muted: var(--aurral-text-muted);
+  --aurral-play-top: var(--aurral-surface-raised);
   --aurral-orb-glow: var(--aurral-accent);
   --aurral-seek-top: var(--aurral-accent);
   --aurral-seek-bottom: var(--aurral-accent);
+  --aurral-seek-track: var(--aurral-border);
   --aurral-progress-top: var(--aurral-success);
   --aurral-progress-bottom: var(--aurral-success);
 }
