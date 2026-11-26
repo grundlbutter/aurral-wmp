@@ -26,7 +26,7 @@ import { LibraryItemMenu, type LibraryMenuItem } from "../components/LibraryItem
 import { Select } from "../components/Select";
 import TooltipButton from "../components/TooltipButton";
 import Pagination from "../components/Pagination";
-import { FavoriteButton, TrackList } from "../components/TrackList";
+import { FavoriteButton, TrackList, type TrackListRow } from "../components/TrackList";
 import { useCollectionTint } from "../components/CollectionHeader";
 import RouteLink from "../components/RouteLink";
 import {
@@ -53,6 +53,7 @@ import {
   albumCardMeta,
   favoriteId,
   firstAvailableFile,
+  yearOf,
 } from "../utils/libraryPageData.ts";
 import { describeAlbumStatus, shouldPollAlbumStatuses } from "../utils/albumStatus.ts";
 import { useArtistMonitoring } from "../components/ArtistMonitoringButtons";
@@ -479,11 +480,54 @@ function LibraryPage() {
     loadAlbumCollection,
     playCollection,
   } = actions;
-  const renderTrackList = (tracks: LibraryPageTrack[], label: string) => (
+  const albumGroupedRow = (row: TrackListRow, track: LibraryPageTrack): TrackListRow => {
+    const album = getAlbumForTrack(track);
+    if (!album) return row;
+    const artistName = getArtistForAlbum(album)?.name || album.albumArtist || "Unknown Artist";
+    const details = [metadataGenres(album)[0], yearOf(album.releaseDate)].filter(Boolean);
+    const trackNumber = track.albums?.find(
+      (entry) => String(entry.albumId) === String(album.id),
+    )?.trackNumber;
+    return {
+      ...row,
+      number: trackNumber || row.number,
+      subtitle: row.artist?.label === artistName ? null : row.subtitle,
+      group: {
+        key: String(album.id),
+        label: album.title || "Unknown Album",
+        heading: artistName,
+        aside: (
+          <>
+            <RouteLink
+              to={actions.libraryAlbumPath(album)}
+              className="native-library-track-group__album"
+            >
+              <span className="native-library-track-group__cover">
+                <Cover src={album.coverUrl} label={album.title} compact />
+              </span>
+              <strong>{album.title || "Unknown Album"}</strong>
+            </RouteLink>
+            <span>{artistName}</span>
+            {details.length ? <span>{details.join(" · ")}</span> : null}
+          </>
+        ),
+      },
+    };
+  };
+  const renderTrackList = (
+    tracks: LibraryPageTrack[],
+    label: string,
+    { quality = false, grouped = false } = {},
+  ) => (
     <TrackList
       label={label}
+      variant={grouped ? "release" : "collection"}
+      showQuality={quality}
       highlightKey={searchParams.get("track")}
-      rows={tracks.map((track, index) => actions.buildLibraryTrackRow(track, index, tracks))}
+      rows={tracks.map((track, index) => {
+        const row = actions.buildLibraryTrackRow(track, index, tracks);
+        return grouped ? albumGroupedRow(row, track) : row;
+      })}
     />
   );
 
@@ -1329,7 +1373,10 @@ function LibraryPage() {
         {filteredAlbums.map((album) => renderAlbumCard(album))}
       </div>
     ) : tab === "tracks" ? (
-      renderTrackList(filteredTracks, "Library tracks")
+      renderTrackList(filteredTracks, "Library tracks", {
+        quality: true,
+        grouped: sortMode === "album",
+      })
     ) : (
       renderGenres()
     );

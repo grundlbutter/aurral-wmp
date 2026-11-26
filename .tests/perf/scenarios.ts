@@ -76,6 +76,7 @@ export const scenarios: Scenario[] = [
       library({ kind: "artists", page: 1, pageSize: 100, sort: "released" }),
       library({ kind: "tracks", page: 1, pageSize: 100, sort: "played", availableOnly: true }),
       library({ kind: "tracks", page: 1, pageSize: 100, sort: "released", availableOnly: true }),
+      library({ kind: "tracks", page: 1, pageSize: 100, sort: "album", availableOnly: true }),
     ],
   },
   { name: "library genres", requests: () => [library({ kind: "genres", page: 1, pageSize: 100 })] },

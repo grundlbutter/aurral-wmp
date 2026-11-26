@@ -61,6 +61,8 @@ type TrackLinkField = {
 
 type TrackCoverField = TrackLinkField & { src?: string | null };
 
+type TrackGroup = { key: string; label: string; heading?: string | null; aside: ReactNode };
+
 export type TrackListRow = {
   key: string | number;
   section?: string | null;
@@ -92,6 +94,8 @@ export type TrackListRow = {
   menu?: Omit<ComponentProps<typeof LibraryItemMenu>, "label">;
   menuElement?: ReactNode;
   favorite?: { active: boolean; pending: boolean; onToggle: () => void } | null;
+  quality?: { label: string; lossless: boolean } | null;
+  group?: TrackGroup | null;
 };
 
 export function FavoriteButton({
@@ -307,6 +311,7 @@ export function TrackList({
   showYear = false,
   showReason = false,
   showAddedBy = false,
+  showQuality = false,
   wideTime = false,
   onReorder = null,
 }: {
@@ -316,6 +321,7 @@ export function TrackList({
   showYear?: boolean;
   showReason?: boolean;
   showAddedBy?: boolean;
+  showQuality?: boolean;
   wideTime?: boolean;
   variant?: "collection" | "release" | "compact";
   sort?: TrackSort | null;
@@ -478,6 +484,15 @@ export function TrackList({
         ) : (
           <span className="native-library-track__popular" />
         )}
+        {showQuality ? (
+          <span className="native-library-track__quality">
+            {row.quality ? (
+              <span className={"quality-chip" + (row.quality.lossless ? " is-lossless" : "")}>
+                {row.quality.label}
+              </span>
+            ) : null}
+          </span>
+        ) : null}
         <span className={"native-library-track__time" + (row.timeMissing ? " is-missing" : "")}>
           {row.time}
         </span>
@@ -508,7 +523,31 @@ export function TrackList({
     );
   };
 
-  const list = (
+  const groups = rows.reduce<{ group: TrackGroup; rows: TrackListRow[] }[]>((result, row) => {
+    if (!row.group) return result;
+    const last = result.at(-1);
+    if (last?.group.key === row.group.key) last.rows.push(row);
+    else result.push({ group: row.group, rows: [row] });
+    return result;
+  }, []);
+
+  const list = groups.length ? (
+    <div className="native-library-track-groups">
+      {groups.flatMap(({ group, rows: groupRows }, index) => [
+        group.heading && group.heading !== groups[index - 1]?.group.heading ? (
+          <div key={`heading-${group.key}`} className="native-library-track-section">
+            {group.heading}
+          </div>
+        ) : null,
+        <section key={group.key} className="native-library-track-group" aria-label={group.label}>
+          <div className="native-library-track-group__aside">{group.aside}</div>
+          <div role="list" aria-label={group.label}>
+            {groupRows.map((row) => renderRow(row, null))}
+          </div>
+        </section>,
+      ])}
+    </div>
+  ) : (
     <div role="list" aria-label={label}>
       {rows.flatMap((row) => [
         row.section ? (
@@ -531,48 +570,56 @@ export function TrackList({
     </div>
   );
 
+  const heading =
+    variant === "compact" ? null : (
+      <div
+        className="native-library-track native-library-track--heading"
+        aria-hidden={sort || selection ? undefined : "true"}
+      >
+        {selection ? (
+          <span className="native-library-track__select">
+            <input
+              type="checkbox"
+              checked={selection.allSelected}
+              onChange={selection.onToggleAll}
+              aria-label="Select all tracks"
+            />
+          </span>
+        ) : (
+          <span />
+        )}
+        <HeadingCell id="number" label="#" sort={sort} className="native-library-track__number" />
+        {isCollection ? <span /> : null}
+        <HeadingCell id="title" label="Title" sort={sort} />
+        {isCollection ? <HeadingCell id="artist" label="Artist" sort={sort} /> : null}
+        {isCollection ? <HeadingCell id="album" label="Album" sort={sort} /> : null}
+        {showReason ? <span className="native-library-track__reason">Why</span> : null}
+        {showAddedBy ? <span className="native-library-track__added-by">Added by</span> : null}
+        {showYear ? (
+          <HeadingCell id="year" label="Year" sort={sort} className="native-library-track__year" />
+        ) : null}
+        {showPopular ? <span /> : null}
+        {showQuality ? <span className="native-library-track__quality">Quality</span> : null}
+        <span className="native-library-track__time">Time</span>
+        <span />
+        <span />
+        <span />
+      </div>
+    );
+
   return (
     <div
-      className={`native-library-track-list native-library-track-list--${variant}${showYear ? " native-library-track-list--year" : ""}${showReason ? " native-library-track-list--reason" : ""}${showAddedBy ? " native-library-track-list--added-by" : ""}${wideTime ? " native-library-track-list--wide-time" : ""}${showPopular ? " native-library-track-list--popular" : ""}`}
+      className={`native-library-track-list native-library-track-list--${variant}${showYear ? " native-library-track-list--year" : ""}${showReason ? " native-library-track-list--reason" : ""}${showAddedBy ? " native-library-track-list--added-by" : ""}${showQuality ? " native-library-track-list--quality" : ""}${wideTime ? " native-library-track-list--wide-time" : ""}${showPopular ? " native-library-track-list--popular" : ""}${groups.length ? " native-library-track-list--grouped" : ""}`}
     >
-      {variant === "compact" ? null : (
-        <div
-          className="native-library-track native-library-track--heading"
-          aria-hidden={sort || selection ? undefined : "true"}
-        >
-          {selection ? (
-            <span className="native-library-track__select">
-              <input
-                type="checkbox"
-                checked={selection.allSelected}
-                onChange={selection.onToggleAll}
-                aria-label="Select all tracks"
-              />
-            </span>
-          ) : (
-            <span />
-          )}
-          <HeadingCell id="number" label="#" sort={sort} className="native-library-track__number" />
-          {isCollection ? <span /> : null}
-          <HeadingCell id="title" label="Title" sort={sort} />
-          {isCollection ? <HeadingCell id="artist" label="Artist" sort={sort} /> : null}
-          {isCollection ? <HeadingCell id="album" label="Album" sort={sort} /> : null}
-          {showReason ? <span className="native-library-track__reason">Why</span> : null}
-          {showAddedBy ? <span className="native-library-track__added-by">Added by</span> : null}
-          {showYear ? (
-            <HeadingCell
-              id="year"
-              label="Year"
-              sort={sort}
-              className="native-library-track__year"
-            />
-          ) : null}
-          {showPopular ? <span /> : null}
-          <span className="native-library-track__time">Time</span>
-          <span />
-          <span />
-          <span />
+      {heading && groups.length ? (
+        <div className="native-library-track-group native-library-track-group--heading">
+          <span className="native-library-track-group__aside" aria-hidden="true">
+            Album
+          </span>
+          {heading}
         </div>
+      ) : (
+        heading
       )}
       {onReorder ? (
         <SortableList

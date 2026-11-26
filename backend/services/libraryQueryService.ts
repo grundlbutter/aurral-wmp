@@ -2834,7 +2834,7 @@ function buildPageQuery({
     entityKind = "track";
     const needsRelations =
       Boolean(artistId || albumId || genre || status) ||
-      ["artist", "played", "plays", "released"].includes(sort) ||
+      ["artist", "album", "played", "plays", "released"].includes(sort) ||
       Boolean(query && !searchMatch);
     from = needsRelations
       ? `FROM library_tracks AS track
@@ -2939,6 +2939,8 @@ function buildPageQuery({
   } else if (sort === "newest") {
     orderBy = recentMediaOrder(kind, sourceFilter, availableOnly, direction);
     orderBy += kind === "albums" ? ", album.id" : kind === "artists" ? ", artist.id" : ", track.id";
+  } else if (sort === "album" && kind === "tracks") {
+    orderBy = `coalesce(artist.sort_name, artist.name) COLLATE NOCASE ${orderDirection}, album.title COLLATE NOCASE ${orderDirection}, album.id ${orderDirection}, album_track.disc_number, album_track.track_number, track.id`;
   } else if (sort === "artist" && kind !== "artists") {
     const artistName =
       kind === "tracks" ? "coalesce(nullif(track.artist_name, ''), artist.name)" : "artist.name";

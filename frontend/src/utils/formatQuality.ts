@@ -30,6 +30,7 @@ const CODEC_LABELS: Record<string, string> = {
 };
 
 const LOSSY_LABELS = new Set(["MP3", "MP2", "AAC", "OGG", "Opus"]);
+const LOSSLESS_LABELS = new Set(["FLAC", "ALAC", "WAV", "PCM", "AIFF", "APE", "WavPack"]);
 
 const codecLabel = (format: string | null | undefined) => {
   const value = format?.trim();
@@ -55,4 +56,21 @@ export function formatQuality(quality: FileQuality | null | undefined) {
   ].filter(Boolean);
   if (codec && parts.length) return `${codec} ${parts.join(" · ")}`;
   return codec || parts.join(" · ");
+}
+
+export function formatQualityChip(quality: FileQuality | null | undefined) {
+  if (!quality) return null;
+  const codec =
+    codecLabel(quality.format) ||
+    codecLabel(quality.audioFormat) ||
+    codecLabel(quality.quality?.name);
+  if (!codec) return null;
+  const lossless = LOSSLESS_LABELS.has(codec);
+  const bitrate = positive(quality.bitrate);
+  const sampleRate = positive(quality.sampleRate);
+  const bitsPerSample = positive(quality.bitsPerSample);
+  const detail = lossless
+    ? bitsPerSample && sampleRate && `${Math.round(bitsPerSample)}/${Math.floor(sampleRate / 1000)}`
+    : bitrate && String(Math.round(bitrate / 1000));
+  return { label: detail ? `${codec} ${detail}` : codec, lossless };
 }
