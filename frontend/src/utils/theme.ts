@@ -26,6 +26,7 @@ export const LEGACY_THEME_STORAGE_KEYS = [
 ];
 export const THEME_DOCUMENT_VERSION = 2;
 export const DEFAULT_THEME_ID = "aurral";
+export const NEW_USER_THEME_ID = GLASS_THEME.id;
 export const THEME_APPEARANCES: readonly unknown[] = ["system", "light", "dark"];
 export const THEME_MODES = ["light", "dark"] as const;
 export const MAX_CUSTOM_THEMES = 50;
@@ -297,9 +298,9 @@ export function createThemeId(name: unknown, takenIds: string[] = []) {
 export function createDefaultThemeDocument(): ThemeDocument {
   return {
     version: THEME_DOCUMENT_VERSION,
-    themeId: DEFAULT_THEME_ID,
+    themeId: NEW_USER_THEME_ID,
     appearance: "system",
-    matchArtwork: true,
+    matchArtwork: false,
     themes: [],
   };
 }

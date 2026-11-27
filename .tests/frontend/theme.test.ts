@@ -116,12 +116,16 @@ test("every theme is readable in light and dark, including low-contrast and one-
   }
 });
 
-test("Aurral's own colors come from the stylesheet and other themes are written to the page", async () => {
+test("new users start on Glass without immersive mode, and Aurral's own colors come from the stylesheet", async () => {
   const { variables, dataset } = createBrowser({ prefersDark: true });
-  const { initializeTheme, selectTheme } = await loadTheme();
+  const { getThemeDocument, initializeTheme, selectTheme } = await loadTheme();
 
   initializeTheme();
   assert.equal(dataset.theme, "dark");
+  assert.equal(dataset.themeId, "glass");
+  assert.equal(getThemeDocument().matchArtwork, false);
+
+  selectTheme("aurral");
   assert.equal(variables.size, 0);
 
   selectTheme("nord");
@@ -271,7 +275,7 @@ test("a device's theme is uploaded only to the account that made it", async () =
   await other.answer();
   await otherSync.ready;
   assert.equal(other.saves.length, 0);
-  assert.equal(theme.getThemeDocument().themeId, "aurral");
+  assert.equal(theme.getThemeDocument().themeId, "glass");
 });
 
 test("a refresh that started before a local change does not undo it", async () => {
@@ -414,8 +418,19 @@ test("the startup script paints the saved theme before the app loads", async () 
   assert.equal(runStartup(true).variables.size, 0);
 });
 
-test("album art tints the accent while immersive mode is on, which it is by default", async () => {
-  const { variables } = createBrowser({ prefersDark: true });
+test("album art tints the accent while immersive mode is on, and a saved choice outlasts the new defaults", async () => {
+  const { variables } = createBrowser({
+    prefersDark: true,
+    storage: {
+      "aurralTheme:v2": JSON.stringify({
+        version: 2,
+        themeId: "aurral",
+        appearance: "system",
+        matchArtwork: true,
+        themes: [],
+      }),
+    },
+  });
   const { initializeTheme, setArtworkColor, setImmersiveMode } = await loadTheme();
   initializeTheme();
 
@@ -455,7 +470,7 @@ test("previewing a theme changes the page without changing the saved choice", as
   assert.equal(stored.get("aurralTheme:v2"), before);
 
   previewTheme(null);
-  assert.equal(dataset.themeId, "aurral");
+  assert.equal(dataset.themeId, "glass");
   assert.deepEqual(seenModes, ["dark", "light"]);
 });
 
