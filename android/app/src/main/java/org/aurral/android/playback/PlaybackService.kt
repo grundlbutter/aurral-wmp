@@ -2,6 +2,8 @@ package org.aurral.android.playback
 
 import android.app.PendingIntent
 import android.content.Intent
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -11,6 +13,12 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
+import androidx.media3.datasource.DataSourceBitmapLoader
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import java.util.concurrent.Executors
 import kotlinx.coroutines.launch
 import org.aurral.android.AurralApp
 import org.aurral.android.api.SubsonicClient
@@ -19,11 +27,14 @@ import org.aurral.android.data.ScrobbleEntity
 import org.aurral.android.ui.MainActivity
 import java.io.IOException
 
+@OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService() {
     private var session: MediaSession? = null
 
     override fun onCreate() {
         super.onCreate()
+        // Streams and artwork go through the app's OkHttp client, which adds the app key.
+        val dataSources = DefaultDataSource.Factory(this, OkHttpDataSource.Factory(AurralApp.instance.http))
         val player = ExoPlayer.Builder(this)
             .setAudioAttributes(
                 AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(),
@@ -31,6 +42,7 @@ class PlaybackService : MediaSessionService() {
             )
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSources))
             .build()
         player.addListener(ScrobbleListener(player))
         val openApp = PendingIntent.getActivity(
@@ -41,6 +53,9 @@ class PlaybackService : MediaSessionService() {
         )
         session = MediaSession.Builder(this, player)
             .setSessionActivity(openApp)
+            .setBitmapLoader(
+                DataSourceBitmapLoader(MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor()), dataSources),
+            )
             .setCallback(object : MediaSession.Callback {
                 // Controllers only pass requestMetadata across, so the playable URI travels there.
                 override fun onAddMediaItems(

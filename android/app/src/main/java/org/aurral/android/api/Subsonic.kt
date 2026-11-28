@@ -127,7 +127,7 @@ class SubsonicClient(private val account: Account, private val http: OkHttpClien
 
     private suspend fun call(method: String, vararg params: Pair<String, String>): JsonObject =
         withContext(Dispatchers.IO) {
-            val request = Request.Builder().url(url(method, *params)).build()
+            val request = request(url(method, *params))
             http.newCall(request).execute().use { response ->
                 val body = response.body?.string().orEmpty()
                 if (body.trimStart().startsWith("<")) {
@@ -209,7 +209,7 @@ class SubsonicClient(private val account: Account, private val http: OkHttpClien
     }
 
     private suspend fun fetch(url: HttpUrl, out: OutputStream) = withContext(Dispatchers.IO) {
-        http.newCall(Request.Builder().url(url).build()).execute().use { response ->
+        http.newCall(request(url)).execute().use { response ->
             val type = response.header("Content-Type").orEmpty()
             if (!response.isSuccessful) throw SubsonicException("Download failed: HTTP ${response.code}", response.code)
             if (type.startsWith("text/") || type.contains("json")) {
@@ -218,6 +218,10 @@ class SubsonicClient(private val account: Account, private val http: OkHttpClien
             response.body!!.byteStream().use { it.copyTo(out, 64 * 1024) }
         }
     }
+
+    private fun request(url: HttpUrl) = Request.Builder().url(url).apply {
+        if (account.apiKey.isNotBlank()) header("X-Api-Key", account.apiKey)
+    }.build()
 
     private fun notFound() = SubsonicException("Not found on Aurral", 70)
 }

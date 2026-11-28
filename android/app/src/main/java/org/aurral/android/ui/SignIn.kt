@@ -42,9 +42,9 @@ private fun normalize(url: String): String {
 }
 
 /** Tries token sign-in first, then password sign-in for accounts without a stored Subsonic password. */
-private suspend fun signIn(url: String, username: String, password: String): Account {
+private suspend fun signIn(url: String, username: String, password: String, apiKey: String): Account {
     val app = AurralApp.instance
-    val base = Account(normalize(url), username.trim(), password, UUID.randomUUID().toString().take(12), passwordAuth = false)
+    val base = Account(normalize(url), username.trim(), password, UUID.randomUUID().toString().take(12), passwordAuth = false, apiKey = apiKey.trim())
     try {
         SubsonicClient(base, app.http).ping()
         return base
@@ -63,6 +63,7 @@ fun SignInScreen(onDone: () -> Unit, onBack: (() -> Unit)? = null) {
     var url by remember { mutableStateOf(existing?.serverUrl.orEmpty()) }
     var username by remember { mutableStateOf(existing?.username.orEmpty()) }
     var password by remember { mutableStateOf(existing?.password.orEmpty()) }
+    var apiKey by remember { mutableStateOf(existing?.apiKey.orEmpty()) }
     var error by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -102,6 +103,17 @@ fun SignInScreen(onDone: () -> Unit, onBack: (() -> Unit)? = null) {
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             )
+            Spacer(Modifier.height(12.dp))
+            OutlinedTextField(
+                apiKey,
+                { apiKey = it },
+                Modifier.fillMaxWidth(),
+                label = { Text("App key") },
+                supportingText = { Text("Your API key from Aurral, Settings > Profile > API access") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            )
             error?.let {
                 Spacer(Modifier.height(12.dp))
                 Text(it, color = MaterialTheme.colorScheme.error)
@@ -113,11 +125,15 @@ fun SignInScreen(onDone: () -> Unit, onBack: (() -> Unit)? = null) {
                     error = null
                     scope.launch {
                         try {
-                            app.accounts.save(signIn(url, username, password))
+                            app.accounts.save(signIn(url, username, password, apiKey))
                             SyncScheduler.applySchedule(app)
                             onDone()
                         } catch (e: SubsonicException) {
-                            error = if (e.code == 40) "Wrong username or password" else e.message
+                            error = when (e.code) {
+                                40 -> "Wrong username or password"
+                                50 -> "This server needs your app key: in Aurral, Settings > Profile > API access"
+                                else -> e.message
+                            }
                         } catch (e: Exception) {
                             error = "Can't reach that address: ${e.message}"
                         } finally {
@@ -131,8 +147,8 @@ fun SignInScreen(onDone: () -> Unit, onBack: (() -> Unit)? = null) {
             Spacer(Modifier.height(16.dp))
             Text(
                 "Uses Aurral's Subsonic access at /rest. Behind a sign-in proxy such as Authentik, let /rest/* " +
-                    "through without the proxy login; Aurral still checks your password. An account created by " +
-                    "the proxy needs a password set in Aurral first.",
+                    "through without the proxy login; Aurral still checks your password and app key. An account " +
+                    "created by the proxy needs a password set in Aurral first.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Glass.Muted,
             )

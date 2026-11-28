@@ -8,6 +8,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.aurral.android.api.SubsonicClient
 import org.aurral.android.data.AurralDb
@@ -15,7 +18,7 @@ import org.aurral.android.playback.Scrobbles
 import org.aurral.android.sync.SyncScheduler
 import java.util.concurrent.TimeUnit
 
-class AurralApp : Application() {
+class AurralApp : Application(), ImageLoaderFactory {
     lateinit var accounts: AccountStore
         private set
     lateinit var syncOptions: SyncOptionsStore
@@ -28,6 +31,19 @@ class AurralApp : Application() {
 
     val http: OkHttpClient by lazy {
         OkHttpClient.Builder()
+            // Covers, streams and downloads all carry the app key, but only to the signed-in server.
+            .addInterceptor { chain ->
+                val request = chain.request()
+                val account = accounts.state.value
+                val server = account?.serverUrl?.toHttpUrlOrNull()
+                if (account == null || account.apiKey.isBlank() || server == null ||
+                    server.host != request.url.host || server.port != request.url.port
+                ) {
+                    chain.proceed(request)
+                } else {
+                    chain.proceed(request.newBuilder().header("X-Api-Key", account.apiKey).build())
+                }
+            }
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .build()
@@ -43,6 +59,8 @@ class AurralApp : Application() {
         SyncScheduler.applySchedule(this)
     }
 
+    override fun newImageLoader() = ImageLoader.Builder(this).okHttpClient(http).build()
+
     fun api(): SubsonicClient? = accounts.state.value?.let { SubsonicClient(it, http) }
 
     companion object {
@@ -57,6 +75,7 @@ data class Account(
     val password: String,
     val salt: String,
     val passwordAuth: Boolean,
+    val apiKey: String,
 )
 
 class AccountStore(context: Context) {
@@ -72,6 +91,7 @@ class AccountStore(context: Context) {
             password = prefs.getString("password", "").orEmpty(),
             salt = prefs.getString("salt", "").orEmpty(),
             passwordAuth = prefs.getBoolean("passwordAuth", false),
+            apiKey = prefs.getString("apiKey", "").orEmpty(),
         )
     }
 
@@ -82,6 +102,7 @@ class AccountStore(context: Context) {
             .putString("password", account.password)
             .putString("salt", account.salt)
             .putBoolean("passwordAuth", account.passwordAuth)
+            .putString("apiKey", account.apiKey)
             .apply()
         _state.value = account
     }
