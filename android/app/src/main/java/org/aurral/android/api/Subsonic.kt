@@ -112,10 +112,14 @@ class SubsonicClient(private val account: Account, private val http: OkHttpClien
 
     fun url(method: String, vararg params: Pair<String, String>): HttpUrl =
         "$base/rest/$method".toHttpUrl().newBuilder().apply {
-            addQueryParameter("u", account.username)
-            if (account.passwordAuth) {
+            if (account.username.isBlank()) {
+                // Browser sign-in: OpenSubsonic API key authentication, no username or password.
+                addQueryParameter("apiKey", account.apiKey)
+            } else if (account.passwordAuth) {
+                addQueryParameter("u", account.username)
                 addQueryParameter("p", "enc:" + account.password.toByteArray().toHex())
             } else {
+                addQueryParameter("u", account.username)
                 addQueryParameter("t", md5(account.password + account.salt))
                 addQueryParameter("s", account.salt)
             }

@@ -427,7 +427,7 @@ test("error responses match the Subsonic and OpenSubsonic schemas", async () => 
   const apiKey = await fetch(
     `http://127.0.0.1:${aurral.port}/rest/ping.view?apiKey=unsupported&v=1.16.1&c=schema-test&f=json`,
   );
-  assert.equal(subsonicPayload(await apiKey.text()).error.code, 42);
+  assert.equal(subsonicPayload(await apiKey.text()).error.code, 44);
 
   const apiKeyWithUsername = await fetch(
     `http://127.0.0.1:${aurral.port}/rest/ping.view?u=alice&apiKey=unsupported&v=1.16.1&c=schema-test&f=json`,

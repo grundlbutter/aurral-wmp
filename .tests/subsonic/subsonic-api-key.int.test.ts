@@ -17,10 +17,9 @@ const [isolatedState, { db }, { dbOps, userOps }, { hashPassword }] = await setu
 
 let aurral: Awaited<ReturnType<typeof startServerProcess>>;
 
-async function ping(headers: Record<string, string>) {
+async function ping(headers: Record<string, string>, auth: Record<string, string> = {}) {
   const query = new URLSearchParams({
-    u: "alice",
-    p: "password123",
+    ...(auth.apiKey ? auth : { u: "alice", p: "password123" }),
     v: "1.16.1",
     c: "test",
     f: "json",
@@ -57,4 +56,9 @@ test("requires the signed-in user's own API key when AURRAL_SUBSONIC_REQUIRE_API
     assert.equal(payload.status, status, JSON.stringify(headers));
     if (status === "failed") assert.equal(payload.error.code, 50);
   }
+});
+
+test("signs in with only the user's own API key", async () => {
+  assert.equal((await ping({}, { apiKey: "alice-key" })).status, "ok");
+  assert.equal((await ping({}, { apiKey: "wrong" })).error.code, 44);
 });

@@ -325,12 +325,16 @@ export const resolveSessionUserFromToken = (token: unknown) => {
   return toSessionUser(getSessionByToken(token));
 };
 
-/** Whether `key` is this user's own API key. Admin and plugin keys don't count. */
-export function isOwnApiKey(key: string, userId: number) {
+/** The active user whose own API key this is. Admin and plugin keys don't count. */
+export function resolveOwnApiKeyUser(key: string) {
   const trimmed = key.trim();
-  if (!trimmed) return false;
+  if (!trimmed) return null;
   const user = userOps.getUserAuthByApiKey(trimmed);
-  return user?.status === "active" && user.id === userId;
+  return user?.status === "active" ? toResolvedUser(user) : null;
+}
+
+export function isOwnApiKey(key: string, userId: number) {
+  return resolveOwnApiKeyUser(key)?.id === userId;
 }
 
 function resolveApiKeyUser(req: CredentialRequest) {

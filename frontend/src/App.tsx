@@ -48,6 +48,7 @@ const Login = lazy(() => import("./pages/Login"));
 const SsoComplete = lazy(() => import("./pages/SsoComplete"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Welcome = lazy(() => import("./pages/Welcome"));
+const ConnectAppPage = lazy(() => import("./pages/ConnectAppPage"));
 const SearchResultsPage = lazy(routeModules.search);
 const DiscoverPage = lazy(routeModules.discover);
 const ShowsPage = lazy(routeModules.shows);
@@ -303,6 +304,14 @@ const appRoutes = createRoutesFromElements(
         element={
           <Suspense fallback={<ScreenLoader />}>
             <Welcome />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/connect-app"
+        element={
+          <Suspense fallback={<ScreenLoader />}>
+            <ConnectAppPage />
           </Suspense>
         }
       />

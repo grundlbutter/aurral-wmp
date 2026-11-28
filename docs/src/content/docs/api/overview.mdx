@@ -102,10 +102,11 @@ Browser Subsonic clients such as Feishin can use `/rest` without `CORS_ORIGIN`.
 
 ## Subsonic authentication
 
-The Subsonic API at `/rest` uses Aurral user accounts, not API keys. It supports both Subsonic sign-in methods:
+The Subsonic API at `/rest` uses Aurral user accounts. It supports these sign-in methods:
 
 - **Password authentication** sends the username and password. Clients often call it legacy authentication.
 - **Token authentication** sends a salted token made from the password.
+- **API key authentication** sends your [API key](#authenticate-with-an-api-key) as `apiKey`, with no username or password. It follows the OpenSubsonic `apiKeyAuthentication` extension.
 
 Token authentication needs a password that Aurral stored for Subsonic. When it fails, Aurral returns error `41`, `Token authentication failed`, with a link to this section. To fix it:
 
