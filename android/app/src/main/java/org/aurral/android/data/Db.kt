@@ -48,54 +48,54 @@ data class ScrobbleEntity(
 )
 
 @Dao
-interface LibraryDao {
+abstract class LibraryDao {
     @Query("SELECT * FROM tracks ORDER BY albumArtist COLLATE NOCASE, album COLLATE NOCASE, disc, track")
-    fun tracks(): Flow<List<TrackEntity>>
+    abstract fun tracks(): Flow<List<TrackEntity>>
 
     @Query("SELECT * FROM tracks")
-    suspend fun allTracks(): List<TrackEntity>
+    abstract suspend fun allTracks(): List<TrackEntity>
 
     @Upsert
-    suspend fun upsertTrack(track: TrackEntity)
+    abstract suspend fun upsertTrack(track: TrackEntity)
 
     @Query("DELETE FROM tracks WHERE id = :id")
-    suspend fun deleteTrack(id: String)
+    abstract suspend fun deleteTrack(id: String)
 
     @Query("SELECT * FROM selections ORDER BY kind, name COLLATE NOCASE")
-    fun selections(): Flow<List<SelectionEntity>>
+    abstract fun selections(): Flow<List<SelectionEntity>>
 
     @Query("SELECT * FROM selections")
-    suspend fun allSelections(): List<SelectionEntity>
+    abstract suspend fun allSelections(): List<SelectionEntity>
 
     @Upsert
-    suspend fun upsertSelection(selection: SelectionEntity)
+    abstract suspend fun upsertSelection(selection: SelectionEntity)
 
     @Query("DELETE FROM selections WHERE kind = :kind AND id = :id")
-    suspend fun deleteSelection(kind: String, id: String)
+    abstract suspend fun deleteSelection(kind: String, id: String)
 
     @Query("SELECT * FROM playlists ORDER BY name COLLATE NOCASE")
-    fun playlists(): Flow<List<PlaylistEntity>>
+    abstract fun playlists(): Flow<List<PlaylistEntity>>
 
     @Query(
         "SELECT t.* FROM playlist_tracks p JOIN tracks t ON t.id = p.trackId " +
             "WHERE p.playlistId = :id ORDER BY p.position",
     )
-    fun playlistTracks(id: String): Flow<List<TrackEntity>>
+    abstract fun playlistTracks(id: String): Flow<List<TrackEntity>>
 
     @Query("DELETE FROM playlists")
-    suspend fun clearPlaylists()
+    abstract suspend fun clearPlaylists()
 
     @Query("DELETE FROM playlist_tracks")
-    suspend fun clearPlaylistTracks()
+    abstract suspend fun clearPlaylistTracks()
 
     @Insert
-    suspend fun insertPlaylists(playlists: List<PlaylistEntity>)
+    abstract suspend fun insertPlaylists(playlists: List<PlaylistEntity>)
 
     @Insert
-    suspend fun insertPlaylistTracks(entries: List<PlaylistTrackEntity>)
+    abstract suspend fun insertPlaylistTracks(entries: List<PlaylistTrackEntity>)
 
     @Transaction
-    suspend fun replacePlaylists(playlists: List<PlaylistEntity>, entries: List<PlaylistTrackEntity>) {
+    open suspend fun replacePlaylists(playlists: List<PlaylistEntity>, entries: List<PlaylistTrackEntity>) {
         clearPlaylistTracks()
         clearPlaylists()
         insertPlaylists(playlists)
@@ -103,13 +103,13 @@ interface LibraryDao {
     }
 
     @Insert
-    suspend fun insertScrobble(scrobble: ScrobbleEntity)
+    abstract suspend fun insertScrobble(scrobble: ScrobbleEntity)
 
     @Query("SELECT * FROM scrobbles ORDER BY playedAt LIMIT 200")
-    suspend fun pendingScrobbles(): List<ScrobbleEntity>
+    abstract suspend fun pendingScrobbles(): List<ScrobbleEntity>
 
     @Query("DELETE FROM scrobbles WHERE rowId = :rowId")
-    suspend fun deleteScrobble(rowId: Long)
+    abstract suspend fun deleteScrobble(rowId: Long)
 }
 
 @Database(

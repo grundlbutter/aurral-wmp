@@ -73,9 +73,9 @@ object SyncScheduler {
     }
 }
 
-private data class Planned(val song: Song, val folderArtist: String)
+internal data class Planned(val song: Song, val folderArtist: String)
 
-private class Plan {
+internal class Plan {
     val tracks = LinkedHashMap<String, Planned>()
     val playlists = mutableListOf<Pair<PlaylistEntity, List<String>>>()
 
@@ -154,7 +154,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         }.joinToString(", ")
     }
 
-    private suspend fun plan(api: SubsonicClient, selections: List<SelectionEntity>): Plan {
+    internal suspend fun plan(api: SubsonicClient, selections: List<SelectionEntity>): Plan {
         val plan = Plan()
         suspend fun addAlbum(id: String) {
             val album = api.album(id)
@@ -202,7 +202,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         return plan
     }
 
-    private suspend fun save(api: SubsonicClient, planned: Planned): TrackEntity {
+    internal suspend fun save(api: SubsonicClient, planned: Planned): TrackEntity {
         val song = planned.song
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName(song))

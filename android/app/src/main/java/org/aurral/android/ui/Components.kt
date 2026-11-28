@@ -151,7 +151,7 @@ fun rememberPlayerUi(controller: MediaController?): PlayerUi {
     }
     LaunchedEffect(controller, revision) {
         while (controller?.isPlaying == true) {
-            position = controller.currentPosition
+            position = controller?.currentPosition ?: 0
             delay(500)
         }
     }
@@ -322,7 +322,7 @@ fun MiniPlayer(onOpen: () -> Unit) {
             Box(Modifier.fillMaxWidth().height(2.dp).background(Glass.Line)) {
                 Box(
                     Modifier
-                        .fillMaxWidth(ui.positionMs.toFloat() / ui.durationMs)
+                        .fillMaxWidth((ui.positionMs.toFloat() / ui.durationMs).coerceIn(0f, 1f))
                         .height(2.dp)
                         .background(Glass.Aqua),
                 )
