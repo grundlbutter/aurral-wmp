@@ -237,6 +237,7 @@ test("exposes getOpenSubsonicExtensions without authentication", async () => {
     { name: "songLyrics", versions: [1] },
     { name: "transcodeOffset", versions: [1] },
     { name: "indexBasedQueue", versions: [1] },
+    { name: "apiKeyAuthentication", versions: [1] },
   ]);
 
   const anonymousXml = await fetch(
@@ -248,7 +249,7 @@ test("exposes getOpenSubsonicExtensions without authentication", async () => {
   );
 
   const authenticated = await request("getOpenSubsonicExtensions", { f: "json" });
-  assert.equal(authenticated.json.openSubsonicExtensions.length, 5);
+  assert.equal(authenticated.json.openSubsonicExtensions.length, 6);
 });
 
 test("accepts form-encoded POST requests", async () => {

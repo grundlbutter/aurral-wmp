@@ -5,7 +5,13 @@ import * as v from "valibot";
 
 import { APP_NAME, APP_VERSION } from "../config/constants.ts";
 import { getSettingsEncryptionKey } from "../db/helpers/settings.ts";
-import { hasPermission, resolveSubsonicTokenUser, resolveUser } from "../services/auth.ts";
+import {
+  hasPermission,
+  isOwnApiKey,
+  resolveOwnApiKeyUser,
+  resolveSubsonicTokenUser,
+  resolveUser,
+} from "../services/auth.ts";
 import { getPlayQueue, getPlayQueueByIndex, savePlayQueue } from "../services/playQueueService.ts";
 import {
   streamBitRate,
@@ -77,6 +83,7 @@ const SUPPORTED_EXTENSIONS = [
   { name: "songLyrics", versions: [1] },
   { name: "transcodeOffset", versions: [1] },
   { name: "indexBasedQueue", versions: [1] },
+  { name: "apiKeyAuthentication", versions: [1] },
 ];
 type SubsonicFormat = "xml" | "json";
 
@@ -91,6 +98,7 @@ type SubsonicValidation = {
   password?: string;
   token?: string;
   salt?: string;
+  apiKey?: string;
 };
 
 const getParameter = (params: SubsonicParams, name: string) => {
@@ -271,10 +279,7 @@ function validateRequest(
   if (providedMechanisms > 1 || (apiKey && getParameter(params, "u"))) {
     return { format, error: [43, "Multiple conflicting authentication mechanisms provided"] };
   }
-  if (apiKey) {
-    return { format, error: [42, "API key authentication is not supported"] };
-  }
-  if (!password && !(token && salt)) {
+  if (!apiKey && !password && !(token && salt)) {
     return { format, error: [10, "Required parameter is missing: p or t/s"] };
   }
 
@@ -298,7 +303,7 @@ function validateRequest(
     };
   }
 
-  return { format, password, token, salt };
+  return { format, password, token, salt, apiKey };
 }
 
 const artistSortKey = (name: string) => {
@@ -333,14 +338,20 @@ function authenticate(params: SubsonicParams, method: string) {
   const validation = validateRequest(params, requestedFormat(params));
   if (validation.error) return { format: validation.format, error: validation.error };
 
-  const { format, password, token, salt } = validation;
+  const { format, password, token, salt, apiKey } = validation;
+  if (apiKey) {
+    const user = resolveOwnApiKeyUser(apiKey);
+    return user
+      ? { format, user, viaApiKey: true }
+      : { format, error: [44, "Invalid API key"] satisfies SubsonicFailure };
+  }
   const decodedPassword = password ? decodePassword(password) : null;
   const user = password
     ? decodedPassword == null
       ? null
       : resolveUser(getParameter(params, "u"), decodedPassword)
     : resolveSubsonicTokenUser(getParameter(params, "u"), token, salt);
-  if (user) return { format, user };
+  if (user) return { format, user, viaApiKey: false };
   logger.debug("subsonic", "Authentication failed", {
     username: getParameter(params, "u"),
     method,
@@ -417,6 +428,16 @@ async function handleSubsonicRequest(c: Context<AppEnv>, requestedMethod: string
   const auth = authenticate(params, requestedMethod);
   if (auth.error) return reply(c, failedResponse(auth.format, ...auth.error));
   const { format, user } = auth;
+  if (
+    process.env.AURRAL_SUBSONIC_REQUIRE_API_KEY === "true" &&
+    !auth.viaApiKey &&
+    !isOwnApiKey(c.req.header("x-api-key") || "", user.id)
+  ) {
+    return reply(
+      c,
+      failedResponse(format, 50, "This server needs your Aurral API key in the X-Api-Key header"),
+    );
+  }
   const ok = (data: Record<string, unknown> = {}) =>
     reply(c, renderResponse(format, "ok", null, data));
   const fail = (...failure: SubsonicFailure) => reply(c, failedResponse(format, ...failure));
