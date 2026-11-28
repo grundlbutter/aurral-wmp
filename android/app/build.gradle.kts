@@ -6,7 +6,10 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-val buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
+// Android commits since the app started: rises with every change, so each build installs over the last.
+val buildNumber = providers.exec {
+    commandLine("git", "rev-list", "--count", "HEAD", "--", ".")
+}.standardOutput.asText.get().trim().toInt()
 
 android {
     namespace = "org.aurral.android"
