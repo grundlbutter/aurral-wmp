@@ -5,7 +5,12 @@ import * as v from "valibot";
 
 import { APP_NAME, APP_VERSION } from "../config/constants.ts";
 import { getSettingsEncryptionKey } from "../db/helpers/settings.ts";
-import { hasPermission, resolveSubsonicTokenUser, resolveUser } from "../services/auth.ts";
+import {
+  hasPermission,
+  isOwnApiKey,
+  resolveSubsonicTokenUser,
+  resolveUser,
+} from "../services/auth.ts";
 import { getPlayQueue, getPlayQueueByIndex, savePlayQueue } from "../services/playQueueService.ts";
 import {
   streamBitRate,
@@ -417,6 +422,15 @@ async function handleSubsonicRequest(c: Context<AppEnv>, requestedMethod: string
   const auth = authenticate(params, requestedMethod);
   if (auth.error) return reply(c, failedResponse(auth.format, ...auth.error));
   const { format, user } = auth;
+  if (
+    process.env.AURRAL_SUBSONIC_REQUIRE_API_KEY === "true" &&
+    !isOwnApiKey(c.req.header("x-api-key") || "", user.id)
+  ) {
+    return reply(
+      c,
+      failedResponse(format, 50, "This server needs your Aurral API key in the X-Api-Key header"),
+    );
+  }
   const ok = (data: Record<string, unknown> = {}) =>
     reply(c, renderResponse(format, "ok", null, data));
   const fail = (...failure: SubsonicFailure) => reply(c, failedResponse(format, ...failure));
